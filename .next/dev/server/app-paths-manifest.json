@@ -1,6 +1,0 @@
-{
-  "/api/resumes/[id]/route": "app/api/resumes/[id]/route.js",
-  "/api/resumes/route": "app/api/resumes/route.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/resumes/[id]/edit/page": "app/dashboard/resumes/[id]/edit/page.js"
-}
