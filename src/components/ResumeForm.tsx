@@ -27,7 +27,6 @@ import { ReviewStep } from "./resume/ReviewStep"
 import { StepNavigation } from "./resume/StepNavigation"
 import { LayoutSelector, type LayoutType } from "./resume/LayoutSelector"
 import { Save, ArrowLeft, CheckCircle2, Upload, Undo2 } from "lucide-react"
-import { PDFUpload } from "./resume/PDFUpload"
 import { useToast } from "@/hooks/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 
@@ -44,7 +43,6 @@ export function ResumeForm({ resumeId, onBack, onSave }: ResumeFormProps) {
   const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(false)
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
-  const [showPDFUpload, setShowPDFUpload] = useState(false)
   const [currentResumeId, setCurrentResumeId] = useState<string | null>(resumeId || null)
   const [currentSectionInfo, setCurrentSectionInfo] = useState<{
     sectionType: string
@@ -249,67 +247,6 @@ export function ResumeForm({ resumeId, onBack, onSave }: ResumeFormProps) {
     await saveDraft(true)
   }
 
-  const handleParseComplete = async (parsedData: ResumeFormData) => {
-    // Reset form with parsed data
-    reset(parsedData)
-    setShowPDFUpload(false)
-    
-    // Automatically save the parsed resume
-    try {
-      const title = generateTitle(parsedData)
-      
-      const resumeData = {
-        title,
-        layout: selectedLayout,
-        isDraft: true,
-        personalInfo: parsedData.personalInfo,
-        professionalSummary: parsedData.professionalSummary,
-        workExperience: parsedData.workExperience,
-        education: parsedData.education,
-        skills: parsedData.skills,
-      }
-
-      // Create new resume from parsed data
-      const response = await fetch("/api/resumes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(resumeData),
-      })
-      
-      if (response.ok) {
-        const savedResume = await response.json()
-        setCurrentResumeId(savedResume.id)
-        
-        // Update the URL if we're creating a new resume
-        if (typeof window !== "undefined" && window.location.pathname === "/dashboard/resumes/new") {
-          window.history.replaceState(null, "", `/dashboard/resumes/${savedResume.id}/edit`)
-        }
-        
-        // Show success notification
-        toast({
-          title: "Resume parsed and saved",
-          description: "Your resume has been parsed and saved successfully.",
-          duration: 3000,
-        })
-      } else {
-        throw new Error("Failed to save parsed resume")
-      }
-      
-      // Update last saved data reference
-      lastSavedDataRef.current = JSON.stringify({
-        formData: parsedData,
-        selectedLayout,
-      })
-    } catch (error) {
-      console.error("Error saving parsed resume:", error)
-      toast({
-        title: "Parsed but not saved",
-        description: "Resume was parsed but failed to save. Please save manually.",
-        duration: 5000,
-      })
-    }
-  }
-
   const handleTextSelect = (text: string, sectionType: string, sectionId?: string) => {
     console.log("Text selected:", { text, sectionType, sectionId })
     // Store section info for use in handleTextImprove
@@ -450,35 +387,21 @@ export function ResumeForm({ resumeId, onBack, onSave }: ResumeFormProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Loading resume...</p>
-      </div>
-    )
-  }
-
-  // Show PDF upload option on first step if no resumeId and showing upload
-  if (showPDFUpload && !resumeId) {
-    return (
-      <div className="w-full h-[calc(100vh-12rem)] flex gap-4">
-        <div className="w-[30%]">
-          <PDFUpload
-            onParseComplete={handleParseComplete}
-            onCancel={() => setShowPDFUpload(false)}
-          />
-        </div>
-        <div className="w-[70%] flex items-center justify-center border rounded-lg bg-gray-50">
-          <p className="text-muted-foreground">Upload a PDF to get started</p>
+      <div className="flex items-center justify-center h-64 animate-fade-in">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-muted-foreground">Loading resume...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full h-[calc(100vh-12rem)] flex gap-4">
+    <div className="w-full h-[calc(100vh-12rem)] flex gap-4 animate-fade-in">
       {/* Left Column - Form (30%) */}
-      <div className="w-[30%] overflow-y-auto">
-        <Card className="h-full">
-          <CardHeader className="sticky top-0 bg-background z-10 border-b">
+      <div className="w-[30%] overflow-y-auto animate-slide-in-left">
+        <Card className="h-full shadow-lg">
+          <CardHeader className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 border-b">
             <div className="flex items-center gap-2 mb-2">
               {onBack && (
                 <Button
@@ -486,12 +409,14 @@ export function ResumeForm({ resumeId, onBack, onSave }: ResumeFormProps) {
                   variant="ghost"
                   size="sm"
                   onClick={onBack}
-                  className="p-2"
+                  className="p-2 hover:bg-accent/50 group"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
                 </Button>
               )}
-              <CardTitle className="flex-1">Create Your ATS-Friendly Resume</CardTitle>
+              <CardTitle className="flex-1 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Create Your ATS-Friendly Resume
+              </CardTitle>
             </div>
             <div className="space-y-2">
               {!resumeId && currentStep === 1 && (
@@ -499,26 +424,27 @@ export function ResumeForm({ resumeId, onBack, onSave }: ResumeFormProps) {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => setShowPDFUpload(true)}
-                  className="w-full gap-2 mb-2"
+                  onClick={() => window.location.href = "/dashboard/resumes/upload"}
+                  className="w-full gap-2 mb-2 group"
                 >
-                  <Upload className="w-4 h-4" />
+                  <Upload className="w-4 h-4 group-hover:translate-y-[-2px] transition-transform duration-200" />
                   Upload PDF Resume
                 </Button>
               )}
               <div className="flex items-center justify-between">
-                <CardDescription>
+                <CardDescription className="text-sm font-medium">
                   Step {currentStep} of {totalSteps}: {STEPS[currentStep - 1].title}
                 </CardDescription>
                 {saved && (
-                  <div className="flex items-center gap-1 text-sm text-green-600">
-                    <CheckCircle2 className="w-4 h-4" />
+                  <div className="flex items-center gap-1 text-sm text-green-600 animate-scale-in">
+                    <CheckCircle2 className="w-4 h-4 animate-bounce-in" />
                     <span>Saved</span>
                   </div>
                 )}
                 {saving && !saved && (
-                  <div className="text-sm text-muted-foreground">
-                    Saving...
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <span>Saving...</span>
                   </div>
                 )}
               </div>

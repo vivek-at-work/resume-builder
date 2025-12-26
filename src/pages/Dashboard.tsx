@@ -1,9 +1,8 @@
 "use client"
 
-import { SignOutButton, useUser } from "@clerk/nextjs"
+import { useUser } from "@clerk/nextjs"
 import { ResumeList } from "@/components/resume/ResumeList"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { Header } from "@/components/layout/Header"
 import { useRouter } from "next/navigation"
 
 export function Dashboard() {
@@ -20,24 +19,17 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="w-full px-4 py-6 space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
+      <Header />
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Page Header */}
+        <div className="flex justify-between items-center animate-fade-in">
           <div>
-            <h1 className="text-4xl font-bold text-foreground">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               Welcome back, {user?.firstName || "User"}!
             </h1>
             <p className="text-muted-foreground mt-1">
               Create and manage your ATS-friendly resumes
             </p>
-          </div>
-          <div className="flex gap-4 items-center">
-            <Link href="/">
-              <Button variant="outline">Back to Home</Button>
-            </Link>
-            <SignOutButton>
-              <Button variant="ghost">Sign Out</Button>
-            </SignOutButton>
           </div>
         </div>
         

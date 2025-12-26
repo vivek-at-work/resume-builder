@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Plus, FileText, Trash2, Edit, Calendar } from "lucide-react"
+import { Plus, FileText, Trash2, Edit, Calendar, Upload } from "lucide-react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -89,60 +89,91 @@ export function ResumeList({ onCreateNew, onEdit }: ResumeListProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Loading resumes...</p>
+      <div className="flex items-center justify-center h-64 animate-fade-in">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-muted-foreground">Loading resumes...</p>
+        </div>
       </div>
     )
   }
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold">My Resumes</h2>
-            <p className="text-muted-foreground">
+          <div className="animate-slide-in-left">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              My Resumes
+            </h2>
+            <p className="text-muted-foreground mt-1">
               Create and manage multiple resumes
             </p>
           </div>
-          <Button onClick={onCreateNew} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Create New Resume
-          </Button>
+          <div className="flex gap-2 animate-slide-in-right">
+            <Button 
+              onClick={() => window.location.href = "/dashboard/resumes/upload"}
+              variant="outline"
+              className="gap-2 hover:scale-105"
+            >
+              <Upload className="w-4 h-4" />
+              Upload PDF
+            </Button>
+            <Button 
+              onClick={onCreateNew} 
+              className="gap-2 hover:scale-105"
+            >
+              <Plus className="w-4 h-4" />
+              Create New Resume
+            </Button>
+          </div>
         </div>
 
         {/* Resume Grid */}
         {resumes.length === 0 ? (
-          <Card className="p-12">
+          <Card className="p-12 animate-scale-in">
             <CardContent className="flex flex-col items-center justify-center text-center">
-              <FileText className="w-16 h-16 text-muted-foreground mb-4" />
+              <div className="mb-4 animate-bounce-in">
+                <FileText className="w-16 h-16 text-muted-foreground" />
+              </div>
               <h3 className="text-xl font-semibold mb-2">No resumes yet</h3>
               <p className="text-muted-foreground mb-6">
-                Get started by creating your first resume
+                Get started by creating your first resume or uploading an existing one
               </p>
-              <Button onClick={onCreateNew} className="gap-2">
-                <Plus className="w-4 h-4" />
-                Create Your First Resume
-              </Button>
+              <div className="flex gap-3">
+                <Button 
+                  onClick={() => window.location.href = "/dashboard/resumes/upload"}
+                  variant="outline"
+                  className="gap-2 hover:scale-105"
+                >
+                  <Upload className="w-4 h-4" />
+                  Upload PDF
+                </Button>
+                <Button onClick={onCreateNew} className="gap-2 hover:scale-105">
+                  <Plus className="w-4 h-4" />
+                  Create New Resume
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {resumes.map((resume) => (
+            {resumes.map((resume, index) => (
               <Card
                 key={resume.id}
-                className="hover:shadow-lg transition-shadow cursor-pointer"
+                className="card-hover cursor-pointer group animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <CardHeader>
+                <CardHeader className="group-hover:bg-accent/5 transition-colors duration-200">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <CardTitle className="text-lg mb-1">
+                      <CardTitle className="text-lg mb-1 group-hover:text-primary transition-colors duration-200">
                         {resume.title}
                       </CardTitle>
                       <CardDescription className="flex items-center gap-2 mt-2">
-                        <Calendar className="w-3 h-3" />
-                        Updated {formatDate(resume.updatedAt)}
+                        <Calendar className="w-3 h-3 opacity-60" />
+                        <span className="text-xs">Updated {formatDate(resume.updatedAt)}</span>
                       </CardDescription>
                     </div>
                   </div>
@@ -153,9 +184,9 @@ export function ResumeList({ onCreateNew, onEdit }: ResumeListProps) {
                       variant="default"
                       size="sm"
                       onClick={() => onEdit(resume.id)}
-                      className="flex-1 gap-2"
+                      className="flex-1 gap-2 group/btn"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-4 h-4 group-hover/btn:rotate-12 transition-transform duration-200" />
                       Edit
                     </Button>
                     <Button
@@ -165,8 +196,9 @@ export function ResumeList({ onCreateNew, onEdit }: ResumeListProps) {
                         setResumeToDelete(resume.id)
                         setDeleteDialogOpen(true)
                       }}
+                      className="group/btn"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-200" />
                     </Button>
                   </div>
                 </CardContent>

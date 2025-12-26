@@ -3,34 +3,14 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useUser } from "@clerk/nextjs"
+import { Header } from "@/components/layout/Header"
 
 export function LandingPage() {
   const { isSignedIn } = useUser()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          ResumeBuilder
-        </div>
-        <div className="flex gap-4">
-          {isSignedIn ? (
-            <Link href="/dashboard">
-              <Button>Go to Dashboard</Button>
-            </Link>
-          ) : (
-            <>
-              <Link href="/sign-in">
-                <Button variant="ghost">Sign In</Button>
-              </Link>
-              <Link href="/sign-up">
-                <Button>Get Started</Button>
-              </Link>
-            </>
-          )}
-        </div>
-      </nav>
+      <Header />
 
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-20">

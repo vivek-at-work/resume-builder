@@ -1,17 +1,14 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { SignOutButton, useUser } from "@clerk/nextjs"
 import { ResumeForm } from "@/components/ResumeForm"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { Header } from "@/components/layout/Header"
 
 interface ResumeFormPageProps {
   resumeId?: string
 }
 
 export function ResumeFormPage({ resumeId }: ResumeFormPageProps) {
-  const { user } = useUser()
   const router = useRouter()
 
   const handleBack = () => {
@@ -23,12 +20,13 @@ export function ResumeFormPage({ resumeId }: ResumeFormPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="w-full px-4 py-6 space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      <Header />
+      <div className="container mx-auto px-4 py-6 space-y-6 animate-fade-in">
+        {/* Page Header */}
+        <div className="flex justify-between items-center animate-slide-in-left">
           <div>
-            <h1 className="text-4xl font-bold text-foreground">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               {resumeId ? "Edit Resume" : "Create New Resume"}
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -36,14 +34,6 @@ export function ResumeFormPage({ resumeId }: ResumeFormPageProps) {
                 ? "Update your resume information"
                 : "Fill out the form to create your ATS-friendly resume"}
             </p>
-          </div>
-          <div className="flex gap-4 items-center">
-            <Link href="/dashboard">
-              <Button variant="outline">Back to Dashboard</Button>
-            </Link>
-            <SignOutButton>
-              <Button variant="ghost">Sign Out</Button>
-            </SignOutButton>
           </div>
         </div>
         

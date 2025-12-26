@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 import type { ResumeFormData } from "@/lib/resumeSchema"
 
 interface PDFUploadProps {
@@ -80,9 +81,11 @@ export function PDFUpload({ onParseComplete, onCancel }: PDFUploadProps) {
   }
 
   return (
-    <Card>
+    <Card className="animate-fade-in">
       <CardHeader>
-        <CardTitle>Upload Resume PDF</CardTitle>
+        <CardTitle className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          Upload Resume PDF
+        </CardTitle>
         <CardDescription>
           Upload your existing resume PDF to automatically fill in the form
         </CardDescription>
@@ -98,19 +101,24 @@ export function PDFUpload({ onParseComplete, onCancel }: PDFUploadProps) {
             id="pdf-upload"
           />
           <label htmlFor="pdf-upload">
-            <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+            <div className={cn(
+              "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all duration-300 ease-out",
+              file 
+                ? "border-blue-500 bg-blue-50/50 hover:bg-blue-50 hover:border-blue-600 hover:shadow-md" 
+                : "border-gray-300 bg-gray-50/50 hover:bg-gray-100 hover:border-primary/50 hover:shadow-sm"
+            )}>
               {file ? (
-                <div className="flex flex-col items-center gap-2">
-                  <FileText className="w-8 h-8 text-blue-600" />
-                  <span className="text-sm font-medium">{file.name}</span>
+                <div className="flex flex-col items-center gap-2 animate-scale-in">
+                  <FileText className="w-8 h-8 text-blue-600 animate-bounce-in" />
+                  <span className="text-sm font-medium text-gray-900">{file.name}</span>
                   <span className="text-xs text-gray-500">
                     {(file.size / 1024).toFixed(2)} KB
                   </span>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-2">
-                  <Upload className="w-8 h-8 text-gray-400" />
-                  <span className="text-sm text-gray-600">
+                <div className="flex flex-col items-center gap-2 group">
+                  <Upload className="w-8 h-8 text-gray-400 group-hover:text-primary group-hover:translate-y-[-2px] transition-all duration-200" />
+                  <span className="text-sm text-gray-600 group-hover:text-primary transition-colors duration-200">
                     Click to upload PDF resume
                   </span>
                   <span className="text-xs text-gray-500">
@@ -123,11 +131,11 @@ export function PDFUpload({ onParseComplete, onCancel }: PDFUploadProps) {
         </div>
 
         {file && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 animate-slide-in-right">
             <Button
               onClick={handleUpload}
               disabled={uploading}
-              className="flex-1 gap-2"
+              className="flex-1 gap-2 group"
             >
               {uploading ? (
                 <>
@@ -136,7 +144,7 @@ export function PDFUpload({ onParseComplete, onCancel }: PDFUploadProps) {
                 </>
               ) : (
                 <>
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-4 h-4 group-hover:rotate-12 transition-transform duration-200" />
                   Parse Resume
                 </>
               )}
@@ -145,20 +153,21 @@ export function PDFUpload({ onParseComplete, onCancel }: PDFUploadProps) {
               variant="outline"
               onClick={handleRemove}
               disabled={uploading}
+              className="group"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
             </Button>
           </div>
         )}
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md animate-scale-in">
             <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
 
         {onCancel && (
-          <Button variant="ghost" onClick={onCancel} className="w-full">
+          <Button variant="ghost" onClick={onCancel} className="w-full hover:bg-accent/50">
             Cancel
           </Button>
         )}

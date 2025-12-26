@@ -93,22 +93,24 @@ export function LayoutSelector({ selectedLayout, onLayoutChange, formData, onTex
     : "resume"
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col animate-fade-in">
       {/* Thumbnail Selector - 10% height */}
-      <div className="h-[10%] min-h-[60px] border-b bg-gray-50 p-2 flex items-center gap-2 overflow-x-auto">
-        <span className="text-xs font-semibold text-gray-600 whitespace-nowrap px-2">Layout:</span>
-        {layouts.map((layout) => (
+      <div className="h-[10%] min-h-[60px] border-b bg-gradient-to-r from-gray-50 to-gray-100/50 p-2 flex items-center gap-2 overflow-x-auto backdrop-blur-sm">
+        <span className="text-xs font-semibold text-gray-700 whitespace-nowrap px-2">Layout:</span>
+        {layouts.map((layout, index) => (
           <button
             key={layout.id}
             type="button"
             onClick={() => onLayoutChange(layout.id)}
             className={cn(
-              "flex-shrink-0 relative border-2 rounded transition-all hover:shadow-md",
-              "h-full aspect-[8.5/11] min-w-[50px]",
+              "flex-shrink-0 relative border-2 rounded-lg transition-all duration-300 ease-out",
+              "h-full aspect-[8.5/11] min-w-[50px] group",
+              "hover:scale-105 hover:shadow-lg active:scale-95",
               selectedLayout === layout.id
-                ? "border-blue-500 bg-blue-50 shadow-sm ring-2 ring-blue-200"
-                : "border-gray-300 bg-white hover:border-gray-400"
+                ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200 ring-offset-1 scale-105"
+                : "border-gray-300 bg-white hover:border-blue-300 hover:bg-blue-50/50"
             )}
+            style={{ animationDelay: `${index * 0.1}s` }}
           >
             {/* Thumbnail Preview */}
             <div className="h-full p-1 overflow-hidden">
@@ -157,22 +159,35 @@ export function LayoutSelector({ selectedLayout, onLayoutChange, formData, onTex
               )}
             </div>
             {/* Label */}
-            <div className="absolute -bottom-5 left-0 right-0 text-[9px] text-center text-gray-600 font-medium">
+            <div className={cn(
+              "absolute -bottom-5 left-0 right-0 text-[9px] text-center font-medium transition-colors duration-200",
+              selectedLayout === layout.id 
+                ? "text-blue-600 font-semibold" 
+                : "text-gray-600 group-hover:text-blue-500"
+            )}>
               {layout.name}
             </div>
+            {/* Selection indicator */}
+            {selectedLayout === layout.id && (
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-sm animate-scale-in"></div>
+            )}
           </button>
         ))}
       </div>
 
       {/* Preview Area - 90% height */}
-      <div className="flex-1 overflow-y-auto bg-white p-6 relative">
-        <div className="absolute top-4 right-4 z-10">
+      <div className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-50 to-white p-6 relative">
+        <div className="absolute top-4 right-4 z-10 animate-slide-in-right">
           <PDFExport 
             resumeContentRef={resumeContentRef} 
             fileName={fileName}
           />
         </div>
-        <div ref={resumeContentRef} style={{ padding: "10px" }} className="print:block">
+        <div 
+          ref={resumeContentRef} 
+          style={{ padding: "10px" }} 
+          className="print:block animate-fade-in pdf-export bg-white"
+        >
           <SelectedLayoutComponent formData={displayData} onTextSelect={onTextSelect} onAccept={onAccept} />
         </div>
       </div>
