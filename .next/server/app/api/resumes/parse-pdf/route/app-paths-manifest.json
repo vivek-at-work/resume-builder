@@ -1,0 +1,3 @@
+{
+  "/api/resumes/parse-pdf/route": "app/api/resumes/parse-pdf/route.js"
+}
