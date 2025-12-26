@@ -1,33 +1,93 @@
 # Resume Builder
 
-A modern resume builder application built with React, TypeScript, Tailwind CSS, and shadcn/ui.
+A modern, ATS-friendly resume builder application built with Next.js, TypeScript, Tailwind CSS, Prisma, Clerk Auth, and AI-powered features.
 
 ## Tech Stack
 
-- **React 19** - UI library
+- **Next.js 16** - React framework with App Router
 - **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
 - **Tailwind CSS** - Utility-first CSS framework
 - **shadcn/ui** - High-quality component library
+- **Prisma** - Database ORM
+- **PostgreSQL** - Database
+- **Clerk** - Authentication
+- **OpenAI** - AI-powered resume parsing and improvements
+- **Docker** - Containerization
 
 ## Getting Started
 
-### Install Dependencies
+### Option 1: Docker (Recommended)
 
+#### Prerequisites
+- Docker Desktop installed and running
+
+#### Quick Start
+
+1. **Create `.env` file** (copy from `.env.example`):
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Update `.env`** with your credentials:
+   - Clerk publishable and secret keys
+   - OpenAI API key
+   - PostgreSQL password
+
+3. **Start development environment**:
+   ```bash
+   docker-compose -f docker-compose.dev.yml up --build
+   ```
+
+4. **Access the application**:
+   - App: http://localhost:3000
+   - Database: localhost:5432
+
+For production:
 ```bash
-npm install
+docker-compose up --build
 ```
 
-### Development
+See [DOCKER.md](./DOCKER.md) for detailed Docker instructions.
 
-```bash
-npm run dev
-```
+### Option 2: Local Development
+
+#### Prerequisites
+- Node.js 20+
+- PostgreSQL 16+
+- npm or yarn
+
+#### Setup
+
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Set up environment variables**:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your credentials
+   ```
+
+3. **Set up database**:
+   ```bash
+   # Create PostgreSQL database (see DATABASE_SETUP.md)
+   npm run db:push
+   ```
+
+4. **Start development server**:
+   ```bash
+   npm run dev
+   ```
+
+5. **Access the application**:
+   - App: http://localhost:3000
 
 ### Build
 
 ```bash
 npm run build
+npm start
 ```
 
 ### Preview Production Build
